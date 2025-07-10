@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .email-box {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #eee;
+      background-color: #f9f9f9;
+    }
+    .email-box h2 {
+      text-align: center;
+      color: #333;
+    }
+    .order-details {
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+    .order-details table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .order-details th, .order-details td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+    .order-details th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-box">
+    <h2>Your Order Status Has Been Updated</h2>
+    <p>Dear Customer,</p>
+    <p>Your order with ID <strong><%= order._id %></strong> has been updated. The new status is: <strong><%= status %></strong>.</p>
+    
+    <div class="order-details">
+      <h3>Order Details:</h3>
+      <% if (Array.isArray(order.product)) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Size</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% order.product.forEach((item) => { %>
+              <tr>
+                <td><%= item.title %></td>
+                <td><%= item.quantity %></td>
+                <td><%= item.size || "N/A" %></td>
+                <td><%= item.price %> TK</td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p><strong>Product:</strong> <%= order.product.title || "N/A" %></p>
+        <p><strong>Quantity:</strong> <%= order.quantity || "N/A" %></p>
+        <p><strong>Size:</strong> <%= order.size || "N/A" %></p>
+        <p><strong>Price:</strong> <%= order.totalPrice || "N/A" %> TK</p>
+      <% } %>
+      <p><strong>Total Price:</strong> <%= order.totalPrice %> TK</p>
+      <p><strong>Shipping Address:</strong> <%= order.streetAddress %></p>
+    </div>
+
+    <p>Thank you for shopping with us!</p>
+  </div>
+</body>
+</html>

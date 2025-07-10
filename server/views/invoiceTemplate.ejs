@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #eee;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      font-size: 16px;
+      line-height: 24px;
+      color: #555;
+    }
+    .invoice-box table {
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+      border-collapse: collapse;
+    }
+    .invoice-box table td {
+      padding: 5px;
+      vertical-align: top;
+    }
+    .invoice-box table tr.top table td {
+      padding-bottom: 20px;
+    }
+    .invoice-box table tr.information table td {
+      padding-bottom: 20px;
+    }
+    .invoice-box table tr.heading td {
+      background: #eee;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+    .invoice-box table tr.item td {
+      border-bottom: 1px solid #eee;
+    }
+    .invoice-box table tr.total td {
+      font-weight: bold;
+    }
+    .invoice-box table tr.item.last td {
+      border-bottom: none;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .invoice-box table tr.top table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+      }
+      .invoice-box table tr.information table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-box">
+    <table>
+      <tr class="top">
+        <td colspan="3">
+          <table>
+            <tr>
+              <td class="title">
+                <h2>Invoice</h2>
+              </td>
+              <td style="text-align: right;">
+                Order #: <%= order._id %><br />
+                Created: <%= new Date(order.createdAt).toLocaleString() %>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr class="information">
+        <td colspan="3">
+          <table>
+            <tr>
+              <td>
+                Shipping Address:<br />
+                <%= order.streetAddress %>
+              </td>
+              <td>
+                Customer Email:<br />
+                <%= email %>
+              </td>
+              <td>
+                Customer Number:<br />
+                <%= order.phoneNumber %>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr class="heading">
+        <td>Product</td>
+        <td>Quantity</td>
+        <td>Size</td>
+      </tr>
+      <% order.product.forEach((item) => { %>
+        <tr class="item">
+          <td><%= item.title %></td>
+          <td><%= order.quantity %></td>
+          <td><%= item.size || 'N/A' %></td>
+        </tr>
+      <% }); %>
+      <tr class="total">
+        <td colspan="2"></td>
+        <td>Total:<%= order.totalPrice %> TK</td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
