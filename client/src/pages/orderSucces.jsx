@@ -7,7 +7,23 @@ import Invoice from "../Components/Invoice";
 const OrderSuccessPage = () => {
   const invoiceRef = useRef();
   const location = useLocation();
-  const { orderNumber, products, shippingMethod, total, customer } = location.state || {};
+  const {
+    orderNumber,
+    products,
+    shippingMethod,
+    shippingCharge,
+    total,
+    customer,
+  } = location.state || {};
+
+  const displayShippingCharge =
+    shippingCharge !== undefined
+      ? Number(shippingCharge).toFixed(2)
+      : shippingMethod === "Inside Dhaka"
+        ? "70.00"
+        : shippingMethod === "Outside Dhaka"
+          ? "130.00"
+          : "0.00";
 
   useEffect(() => {
     if (window.fbq && orderNumber && customer) {
@@ -15,15 +31,18 @@ const OrderSuccessPage = () => {
       const advancedMatching = {
         em: customer.email ? customer.email?.toLowerCase().trim() : undefined,
         fn: customer.name ? customer.name?.toLowerCase().trim() : undefined,
-       
-        ph: customer.phoneNumber ? customer.phoneNumber?.replace(/\D/g, "") : undefined, // Remove non-numeric characters
+
+        ph: customer.phoneNumber
+          ? customer.phoneNumber?.replace(/\D/g, "")
+          : undefined, // Remove non-numeric characters
         external_id: customer?.id || undefined, // Unique customer ID (if available)
         user_agent: navigator?.userAgent || undefined, // Capture user agent
       };
 
       // Remove undefined fields
       Object.keys(advancedMatching).forEach(
-        (key) => advancedMatching[key] === undefined && delete advancedMatching[key]
+        (key) =>
+          advancedMatching[key] === undefined && delete advancedMatching[key],
       );
 
       window.fbq("track", "Purchase", {
@@ -81,18 +100,23 @@ const OrderSuccessPage = () => {
             <div className="space-y-2">
               {products &&
                 products.map((product, index) => (
-                  <div key={index} className="flex justify-between text-gray-600">
+                  <div
+                    key={index}
+                    className="flex justify-between text-gray-600"
+                  >
                     <span>{product.name}</span>
-                    <span>{(product.price * product.quantity).toFixed(2)} ৳</span>
+                    <span>
+                      {(product.price * product.quantity).toFixed(2)} ৳
+                    </span>
                   </div>
                 ))}
               <div className="flex justify-between text-gray-600">
-                <span>Shipping</span>
-                <span>{shippingMethod === "standard" ? "60.00 ৳" : "150.00 ৳"}</span>
+                <span>Shipping ({shippingMethod || "Standard"})</span>
+                <span>{displayShippingCharge} ৳</span>
               </div>
               <div className="flex justify-between text-lg font-semibold text-gray-700">
                 <span>Total</span>
-                <span>{total ? total.toFixed(2) : "N/A"} ৳</span>
+                <span>{total ? Number(total).toFixed(2) : "N/A"} ৳</span>
               </div>
             </div>
           </div>
@@ -107,6 +131,7 @@ const OrderSuccessPage = () => {
             orderNumber={orderNumber}
             products={products}
             shippingMethod={shippingMethod}
+            shippingCharge={shippingCharge}
             total={total}
           />
         </div>

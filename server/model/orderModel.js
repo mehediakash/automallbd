@@ -7,18 +7,21 @@ const orderSchema = new Schema({
     ref: "Product",
     required: [true, "Product is required"],
   },
-  email:{
-    type : String,
+  email: {
+    type: String,
     required: [true, "email is required"],
   },
-  name:{
-    type : String,
+  name: {
+    type: String,
   },
-  size:{
-    type : String,
+  size: {
+    type: String,
   },
-  phoneNumber:{
-    type : String,
+  color: {
+    type: String,
+  },
+  phoneNumber: {
+    type: String,
     required: [true, "phone Number is required"],
   },
   quantity: {
@@ -34,9 +37,22 @@ const orderSchema = new Schema({
     enum: ["Pending", "Processing", "Delivered", "Cancelled"],
     default: "Pending",
   },
-  streetAddress:{
-    type : String,
+  streetAddress: {
+    type: String,
     required: [true, "Address must be is required"],
+  },
+  district: {
+    type: String,
+    required: [true, "District is required"],
+  },
+  shippingMethod: {
+    type: String,
+    required: [true, "Shipping method is required"],
+  },
+  shippingCharge: {
+    type: Number,
+    required: [true, "Shipping charge is required"],
+    default: 0,
   },
 
   createdAt: {

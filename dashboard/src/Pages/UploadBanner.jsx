@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, Upload, Select, Popconfirm, message } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Upload,
+  Select,
+  Popconfirm,
+  message,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import axios from "../Components/Axios";
-import ServerLink from "../Components/ServerLink";
-
+import ServerLink, { getImageUrl } from "../Components/ServerLink";
 
 const BannerManager = () => {
   const [banners, setBanners] = useState([]);
@@ -13,7 +27,12 @@ const BannerManager = () => {
   const [fileList, setFileList] = useState([]);
 
   // Fixed positions for the dropdown
-  const positions = ["MainBanner", "SecondBannerLeft", "SecondBannerRight", "ServiceBanner"];
+  const positions = [
+    "MainBanner",
+    "SecondBannerLeft",
+    "SecondBannerRight",
+    "ServiceBanner",
+  ];
 
   useEffect(() => {
     fetchBanners();
@@ -88,7 +107,7 @@ const BannerManager = () => {
           {photos.map((photo, index) => (
             <img
               key={index}
-              src={`${ServerLink}${photo}`}
+              src={getImageUrl(photo)}
               alt="Banner"
               className="w-20 h-12 object-cover rounded"
             />
@@ -105,7 +124,10 @@ const BannerManager = () => {
             icon={<EditOutlined />}
             onClick={() => {
               setEditingBanner(banner);
-              form.setFieldsValue({ position: banner.position, link: banner.link });
+              form.setFieldsValue({
+                position: banner.position,
+                link: banner.link,
+              });
               setFileList([]);
               setIsModalOpen(true);
             }}
@@ -164,7 +186,9 @@ const BannerManager = () => {
           <Form.Item
             name="position"
             label="Position"
-            rules={[{ required: true, message: "Please select the banner position" }]}
+            rules={[
+              { required: true, message: "Please select the banner position" },
+            ]}
           >
             <Select>
               {positions.map((position) => (
@@ -177,7 +201,9 @@ const BannerManager = () => {
           <Form.Item
             name="link"
             label="Link"
-            rules={[{ required: true, message: "Please input the banner link" }]}
+            rules={[
+              { required: true, message: "Please input the banner link" },
+            ]}
           >
             <Input />
           </Form.Item>

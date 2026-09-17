@@ -1,7 +1,26 @@
+// const serverBaseUrl = "http://localhost:8000/";
+const serverBaseUrl = "https://server.automallbd.com/";
+
+/**
+ * Returns direct Cloudinary URL if external/https, or prepends serverBaseUrl for legacy local uploads
+ * @param {string} photo - Cloudinary URL or legacy local path
+ * @returns {string}
+ */
+export const getImageUrl = (photo) => {
+  if (!photo) return "";
+  if (typeof photo === "string") {
+    if (photo.startsWith("http://") || photo.startsWith("https://")) {
+      return photo;
+    }
+    const cleanPath = photo.replace(/\\/g, "/").replace(/^\/+/, "");
+    return `${serverBaseUrl}${cleanPath}`;
+  }
+  return "";
+};
+
 const serverLink = {
-    api: "https://server.automallbd.net/",
-    // api: "http://localhost:8000/",
-    // api: `${import.meta.env.SERVER_URL}`,
-  };
-  
-  export default serverLink.api;
+  api: serverBaseUrl,
+  getImageUrl,
+};
+
+export default serverLink.api;

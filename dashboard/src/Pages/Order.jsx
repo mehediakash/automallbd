@@ -11,7 +11,6 @@ import {
 } from "antd";
 import axios from "../Components/Axios";
 import logoImage from "../assets/White.png";
- 
 
 const Order = () => {
   const [data, setData] = useState([]);
@@ -40,9 +39,11 @@ const Order = () => {
       name: record.name,
       phoneNumber: record.phoneNumber,
       email: record.email,
+      district: record.district,
+      shippingMethod: record.shippingMethod,
+      shippingCharge: record.shippingCharge,
       streetAddress: record.streetAddress,
       status: record.status,
-      // You can add other fields here as needed
     });
     setIsModalVisible(true);
   };
@@ -89,9 +90,9 @@ const Order = () => {
     try {
       const response = await axios.get(`/order/getOrder/${order._id}`);
       const anOrder = response.data.order;
-  
+
       const invoiceWindow = window.open("");
-  
+
       const invoiceHTML = `
         <html>
           <head>
@@ -123,6 +124,8 @@ const Order = () => {
                 <p><strong>Name:</strong> ${anOrder?.name}</p>
                 <p><strong>Phone:</strong> ${anOrder?.phoneNumber}</p>
                 <p><strong>Email:</strong> ${anOrder?.email}</p>
+                <p><strong>District:</strong> ${anOrder?.district || "N/A"}</p>
+                <p><strong>Shipping Method:</strong> ${anOrder?.shippingMethod || "Standard"} (${anOrder?.shippingCharge ?? 0} TK)</p>
                 <p><strong>Address:</strong> ${anOrder?.streetAddress}</p>
               </div>
               <table class="invoice-products">
@@ -146,16 +149,17 @@ const Order = () => {
                 </tbody>
               </table>
               <div class="invoice-total">
-                <p><strong>Total Price:</strong> ${anOrder?.totalPrice}</p>
+                <p style="font-size: 14px; font-weight: normal; color: #555;"><strong>Shipping Charge:</strong> ${anOrder?.shippingCharge ?? 0} TK</p>
+                <p><strong>Total Price:</strong> ${anOrder?.totalPrice} TK</p>
               </div>
             </div>
           </body>
         </html>
       `;
-  
+
       invoiceWindow.document.write(invoiceHTML);
       invoiceWindow.document.close();
-  
+
       invoiceWindow.onload = () => {
         invoiceWindow.print();
         invoiceWindow.close();
@@ -164,7 +168,6 @@ const Order = () => {
       console.error("Error printing invoice:", error);
     }
   };
-  
 
   const columns = [
     {
@@ -207,18 +210,41 @@ const Order = () => {
       key: "size",
     },
     {
-      title: "streetAddress",
+      title: "Customer & Address",
       dataIndex: "streetAddress",
       key: "streetAddress",
       render: (text, record) => (
-        <div>
-          <p>Name: {record.name}</p>
-          <p>Phone: {record.phoneNumber}</p>
-          <p>Email: {record.email}</p>
+        <div style={{ fontSize: "12px", lineHeight: "1.4" }}>
           <p>
-            Address:
-            {`${record?.streetAddress}`}
+            <strong>Name:</strong> {record.name}
           </p>
+          <p>
+            <strong>Phone:</strong> {record.phoneNumber}
+          </p>
+          <p>
+            <strong>Email:</strong> {record.email}
+          </p>
+          <p>
+            <strong>District:</strong>{" "}
+            <span style={{ color: "#1890ff", fontWeight: 600 }}>
+              {record.district || "N/A"}
+            </span>
+          </p>
+          <p>
+            <strong>Address:</strong> {record?.streetAddress}
+          </p>
+        </div>
+      ),
+    },
+    {
+      title: "Shipping",
+      key: "shipping",
+      render: (text, record) => (
+        <div style={{ fontSize: "12px" }}>
+          <p style={{ fontWeight: 600 }}>
+            {record.shippingMethod || "Standard"}
+          </p>
+          <p style={{ color: "#888" }}>৳{record.shippingCharge ?? 0}</p>
         </div>
       ),
     },
@@ -291,6 +317,15 @@ const Order = () => {
           </Form.Item>
           <Form.Item label="Email" name="email">
             <Input />
+          </Form.Item>
+          <Form.Item label="District" name="district">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Shipping Method" name="shippingMethod">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Shipping Charge" name="shippingCharge">
+            <Input type="number" />
           </Form.Item>
           <Form.Item label="Address" name="streetAddress">
             <Input />

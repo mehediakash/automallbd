@@ -2,16 +2,26 @@ import React from "react";
 import { CiShoppingCart } from "react-icons/ci";
 import { TbCurrencyTaka } from "react-icons/tb";
 import { Link } from "react-router-dom";
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../Components/store/slices/cartSlice';
-import { trackEvent } from "../Components/FacebookPixel"; // Import Pixel Event Function
+import { useDispatch } from "react-redux";
+import { addToCart } from "../Components/store/slices/cartSlice";
+import { trackEvent } from "../Components/FacebookPixel";
 
-// import { addToCart } from '../Components/store/slices/cartSlice'; 
-
-const ProductCard = ({ title, discription,size, price, img, id,product }) => {
+const ProductCard = ({
+  title,
+  discription,
+  description,
+  size,
+  price,
+  img,
+  id,
+  product,
+}) => {
   const dispatch = useDispatch();
-  const handleAddToCart = () => {
-    // Add to Cart Function
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     dispatch(
       addToCart({
         _id: id,
@@ -20,10 +30,9 @@ const ProductCard = ({ title, discription,size, price, img, id,product }) => {
         quantity: 1,
         image: img,
         price: price,
-      })
+      }),
     );
 
-    // Track Facebook Pixel Event
     trackEvent("AddToCart", {
       content_name: title,
       content_category: "Product",
@@ -33,36 +42,66 @@ const ProductCard = ({ title, discription,size, price, img, id,product }) => {
     });
   };
 
- 
+  const productDescription = description || discription;
+
   return (
-    <div className=" rounded-md max-w-[280px] overflow-hidden group relative mt-5">
-      <img className=" rounded-md" src={img} alt="product" />
-      <Link to={`/product/${id}`}>
-      <h1 className="text-white mt-5 mb-2 text-base">{title}</h1>
-      </Link>
-      <p className="text-white text-sm">{discription}</p>
+    <div className="w-full max-w-[280px] mx-auto rounded-xl overflow-hidden group relative bg-[#121b27]/60 hover:bg-[#182434] border border-white/10 hover:border-primary/40 transition-all duration-300 p-2 sm:p-2.5 md:p-3 flex flex-col justify-between">
+      {/* Product Image */}
+      <div className="w-full aspect-square bg-[#0c131c] rounded-lg overflow-hidden relative flex items-center justify-center">
+        <Link to={`/product/${id}`} className="w-full h-full block">
+          <img
+            className="w-full h-full object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+            src={img}
+            alt={title || "Product"}
+            loading="lazy"
+          />
+        </Link>
+      </div>
 
-      <p className=" mt-2 font-medium text-base text-primary flex items-center gap-x-1">
-        {price} <TbCurrencyTaka size={18} />
-      </p>
+      {/* Product Info */}
+      <div className="w-full mt-2 sm:mt-2.5 flex flex-col">
+        <Link to={`/product/${id}`}>
+          <h3
+            className="text-white font-medium text-xs sm:text-sm md:text-base line-clamp-1 hover:text-primary transition-colors"
+            title={title}
+          >
+            {title}
+          </h3>
+        </Link>
 
-      <div className="bg-white py-4 w-full h-[70%] px-2 absolute bottom-0 left-[0] transition-transform duration-300 -translate-y-[-101%] border-red-300 border group-hover:translate-y-[0%] ">
-        <h1 className="text-black mt-5 font-medium mb-2 text-base ">{title}</h1>
-        {/* <p className="!text-white text-sm font-medium hover:text-primary transition-colors">
-          {discription}
-        </p> */}
+        {productDescription && (
+          <p className="text-gray-400 text-[11px] sm:text-xs line-clamp-1 mt-0.5">
+            {productDescription}
+          </p>
+        )}
 
-        <p className=" mt-2 font-bold  text-primary text-base">{price} TK</p>
-        <div className="flex  justify-between items-center mt-5">
-          <Link to={`/product/${id}`}>
-            <button  className="bg-root hover:bg-primary md:w-[100px] md:h-[100px] w-[70px] h-[70px]  transition-colors rounded-full px-4 py-1 text-white font-medium  text-center ">
+        <p className="mt-1 font-bold text-xs sm:text-sm md:text-base text-primary flex items-center gap-0.5">
+          <span>{price}</span>{" "}
+          <TbCurrencyTaka className="text-base sm:text-lg" />
+        </p>
+      </div>
+
+      {/* Slide-up Action Drawer on Desktop / Hover */}
+      <div className="bg-white/95 backdrop-blur-sm p-2 sm:p-2.5 w-full absolute bottom-0 left-0 transition-transform duration-300 translate-y-[102%] group-hover:translate-y-0 rounded-b-xl border-t border-primary/20 shadow-lg flex flex-col justify-between z-10">
+        <h4 className="text-black font-semibold text-[11px] sm:text-xs md:text-sm line-clamp-1 mb-0.5">
+          {title}
+        </h4>
+        <p className="font-bold text-primary text-xs sm:text-sm mb-1.5">
+          {price} TK
+        </p>
+        <div className="flex items-center justify-between gap-1.5">
+          <Link to={`/product/${id}`} className="flex-1">
+            <button className="w-full bg-root hover:bg-primary py-1 sm:py-1.5 px-2 text-[11px] sm:text-xs font-semibold text-white rounded-full transition-colors text-center">
               Buy Now
             </button>
           </Link>
-
-          <div  onClick={handleAddToCart}className="bg-gray-300 cursor-pointer w-[50px] h-[50px] flex rounded-full justify-center items-center text-black hover:bg-primary    font-bold hover:text-white transition-colors ">
-            <CiShoppingCart size={25} className="" />
-          </div>
+          <button
+            onClick={handleAddToCart}
+            className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-200 hover:bg-primary text-black hover:text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
+            title="Add to Cart"
+          >
+            <CiShoppingCart size={16} />
+          </button>
         </div>
       </div>
     </div>

@@ -2,99 +2,128 @@ import React, { useEffect, useState } from "react";
 import axios from "./Axios";
 import ProductCard from "./ProductCard";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules"; // Import modules
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
-import ServerLink from "./Serverlink";
+import { getImageUrl } from "./Serverlink";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch data from both endpoints
+  // Fetch products from authoritative endpoint
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const categoryResponse = await axios.get("/category/getCategory");
-        const subCategoryResponse = await axios.get("/category/getSubCategory");
-  
-        // Combine products from categories and subcategories
-        const categories = categoryResponse.data.Categories || [];
-        const subCategories = subCategoryResponse.data.subCategories || [];
-  
-        // Flatten all products into a single array
-        const allProducts = [
-          ...categories.flatMap((category) => category.product || []),
-          ...subCategories.flatMap((subCategory) => subCategory.product || [])
-        ];
-  
-        // Debug: Log products to check if `photo` is populated correctly
-        console.log(allProducts);
-  
-        setProducts(allProducts.reverse());
+        const response = await axios.get("/product/allproduct");
+        if (response.data.success && Array.isArray(response.data.data)) {
+          const rawProducts = response.data.data;
+          // Deduplicate by _id to guarantee each unique product appears only once
+          const seenIds = new Set();
+          const uniqueProducts = [];
+          for (let i = rawProducts.length - 1; i >= 0; i--) {
+            const p = rawProducts[i];
+            if (p && p._id && !seenIds.has(p._id.toString())) {
+              seenIds.add(p._id.toString());
+              uniqueProducts.push(p);
+            }
+          }
+          setProducts(uniqueProducts);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
       }
     };
-  
+
     fetchProducts();
   }, []);
-  
-  // Group products into chunks of 3 for SwiperSlide
-  const chunkedProducts = [];
-  for (let i = 0; i < products.length; i += 3) {
-    chunkedProducts.push(products.slice(i, i + 3));
+
+  if (!loading && products.length === 0) {
+    return null;
   }
-  console.log( {chunkedProducts})
 
   return (
-    <>
-      <div className="bg-root py-20">
-        <div className="container relative mx-auto flex flex-wrap justify-start border border-[rgba(225,225,225,0.25)] pt-10 px-10 rounded-lg">
-          <div className="absolute top-[0%] left-[50%] translate-y-[-50%] translate-x-[-50%] bg-root py-3 px-5">
-            <h2 className="text-white text-2xl">New Arrivals</h2>
+    <section className="bg-root py-8 sm:py-12 md:py-16">
+      <div className="container mx-auto px-3.5 sm:px-6 lg:px-8">
+        <div className="relative border border-[rgba(225,225,225,0.2)] rounded-xl sm:rounded-2xl pt-7 pb-4 px-3 sm:pt-9 sm:pb-6 sm:px-5 md:pt-12 md:pb-8 md:px-8">
+          {/* Centered Section Title Header Badge */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-root px-4 sm:px-6 py-0.5 sm:py-1 whitespace-nowrap z-10">
+            <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold tracking-wide">
+              New Arrivals
+            </h2>
           </div>
+
+          {/* Desktop Navigation Arrows */}
+          <button
+            className="new-arrivals-prev hidden md:flex absolute top-1/2 -left-4 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-root/90 border border-white/20 text-white hover:bg-primary hover:border-primary items-center justify-center transition-all shadow-lg cursor-pointer"
+            aria-label="Previous Products"
+          >
+            &#10094;
+          </button>
+          <button
+            className="new-arrivals-next hidden md:flex absolute top-1/2 -right-4 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-root/90 border border-white/20 text-white hover:bg-primary hover:border-primary items-center justify-center transition-all shadow-lg cursor-pointer"
+            aria-label="Next Products"
+          >
+            &#10095;
+          </button>
 
           {/* Swiper Slider */}
           <Swiper
-            spaceBetween={30}
-            slidesPerView={1} // Default for mobile
+            spaceBetween={12}
+            slidesPerView={2}
             breakpoints={{
+              480: {
+                slidesPerView: 2,
+                spaceBetween: 14,
+              },
               640: {
-                slidesPerView: 2, // Mobile view
+                slidesPerView: 3,
+                spaceBetween: 16,
               },
               768: {
-                slidesPerView: 4, // Tablets
+                slidesPerView: 3,
+                spaceBetween: 18,
               },
               1024: {
-                slidesPerView: 4, // Larger screens
+                slidesPerView: 4,
+                spaceBetween: 20,
+              },
+              1280: {
+                slidesPerView: 4,
+                spaceBetween: 24,
               },
             }}
-            navigation={false}
+            navigation={{
+              prevEl: ".new-arrivals-prev",
+              nextEl: ".new-arrivals-next",
+            }}
             pagination={{ clickable: true }}
-            modules={[Navigation, Pagination]}
-            className="mySwiper relative pb-10 md:pb-20"
+            modules={[Navigation, Pagination, Autoplay]}
+            autoplay={{
+              delay: 4500,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            className="mySwiper relative pb-10 sm:pb-12"
           >
-            {/* Dynamically create SwiperSlides */}
-           
-            {chunkedProducts?.map((chunk, index) => (
-              <SwiperSlide key={index} className="flex flex-col gap-y-5">
-                {chunk?.map((product) => (
-                  <ProductCard
-                    id={product._id}
-                    product={product}
-                    key={product._id}
-                    title={product.title}
-                    size={product.size}
-                    description={product.description}
-                    img={`${ServerLink}${product.photo[0]}`}
-                    price={product.price}
-                  />
-                ))}
+            {products.map((product) => (
+              <SwiperSlide key={product._id} className="h-auto pb-1">
+                <ProductCard
+                  id={product._id}
+                  product={product}
+                  title={product.title}
+                  size={product.size}
+                  description={product.description}
+                  img={getImageUrl(product.photo?.[0])}
+                  price={product.price}
+                />
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
       </div>
-    </>
+    </section>
   );
 };
 

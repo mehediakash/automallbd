@@ -5,7 +5,7 @@ import { AppstoreOutlined, BarsOutlined } from "@ant-design/icons";
 import ProductCard from "../Components/ProductCard";
 import { RiListSettingsLine } from "react-icons/ri";
 import axios from "../Components/Axios";
-import ServerLink from "../Components/Serverlink";
+import ServerLink, { getImageUrl } from "../Components/Serverlink";
 
 const SubCategoryShop = () => {
   const { id: subCategoryId } = useParams(); // Extract subcategory ID from route
@@ -28,7 +28,7 @@ const SubCategoryShop = () => {
           `/category/getSubCategory/${subCategoryId}`,
           {
             params: { page: currentPage, limit: pageSize },
-          }
+          },
         );
         const { subCategory } = response.data;
         setProducts(subCategory.product || []);
@@ -136,13 +136,15 @@ const SubCategoryShop = () => {
                   key={product._id}
                   title={product.title}
                   discription={product.description}
-                  img={`${ServerLink}${product.photo[0]}`}
+                  img={getImageUrl(product.photo?.[0])}
                   price={product.price}
                   id={product._id}
                 />
               ))
             ) : (
-              <div className="text-white">No products found in this subcategory.</div>
+              <div className="text-white">
+                No products found in this subcategory.
+              </div>
             )}
           </div>
 

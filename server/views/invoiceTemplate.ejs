@@ -86,8 +86,10 @@
           <table>
             <tr>
               <td>
-                Shipping Address:<br />
-                <%= order.streetAddress %>
+                <strong>Shipping Address:</strong><br />
+                <%= order.streetAddress %><br />
+                <strong>District:</strong> <%= order.district || 'N/A' %><br />
+                <strong>Shipping Method:</strong> <%= order.shippingMethod || 'Standard' %>
               </td>
               <td>
                 Customer Email:<br />
@@ -113,9 +115,13 @@
           <td><%= item.size || 'N/A' %></td>
         </tr>
       <% }); %>
+      <tr class="item">
+        <td colspan="2">Shipping Charge (<%= order.shippingMethod || 'Standard' %>)</td>
+        <td><%= order.shippingCharge ? order.shippingCharge + ' TK' : '0 TK' %></td>
+      </tr>
       <tr class="total">
         <td colspan="2"></td>
-        <td>Total:<%= order.totalPrice %> TK</td>
+        <td>Total: <%= order.totalPrice %> TK</td>
       </tr>
     </table>
   </div>

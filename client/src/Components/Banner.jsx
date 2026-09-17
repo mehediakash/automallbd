@@ -4,7 +4,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules"; // Import from modules
-import ServerLink from "./Serverlink";
+import ServerLink, { getImageUrl } from "./Serverlink";
 import { Link } from "react-router-dom";
 const Banner = () => {
   const [banners, setBanners] = useState([]);
@@ -15,7 +15,7 @@ const Banner = () => {
       try {
         const response = await axios.get("banner/all");
         const mainBanners = response.data.banners.filter(
-          (banner) => banner.position === "MainBanner"
+          (banner) => banner.position === "MainBanner",
         );
         setBanners(mainBanners);
       } catch (error) {
@@ -39,21 +39,37 @@ const Banner = () => {
         loop
         className="h-full"
       >
-        {banners.map((banner) => (
-          <SwiperSlide key={banner._id}>
-            <div className="banner-item relative md:h-[92vh]  overflow-hidden">
-              <Link to={banner.link}>
-              <picture>
-                <img
-                  className="md:w-full md:h-fit w-full h-full block p-0 m-0 relative"
-                  src={`${ServerLink}${banner.photo[0]}`}
-                  alt={`Banner ${banner._id}`}
-                />
-              </picture>
-              </Link>
-            </div>
-          </SwiperSlide>
-        ))}
+        {banners.map((banner) => {
+          const desktopPhoto = banner.photo?.[0] || banner.desktopPhoto || "";
+          const mobilePhoto =
+            banner.mobilePhoto ||
+            (banner.photo && banner.photo.length > 1
+              ? banner.photo[1]
+              : null) ||
+            desktopPhoto;
+
+          return (
+            <SwiperSlide key={banner._id}>
+              <div className="banner-item relative w-full overflow-hidden">
+                <Link to={banner.link}>
+                  <picture>
+                    {mobilePhoto && (
+                      <source
+                        media="(max-width: 767px)"
+                        srcSet={getImageUrl(mobilePhoto)}
+                      />
+                    )}
+                    <img
+                      src={getImageUrl(desktopPhoto)}
+                      alt={`Banner ${banner._id}`}
+                      className="w-full h-auto block"
+                    />
+                  </picture>
+                </Link>
+              </div>
+            </SwiperSlide>
+          );
+        })}
 
         <div className="swiper-button-prev custom-swiper-button text-primary"></div>
         <div className="swiper-button-next custom-swiper-button text-primary"></div>

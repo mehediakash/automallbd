@@ -1,9 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-
-function dbconfig(){
-    mongoose.connect(`mongodb+srv://${process.env.DBUSERNAME}:${process.env.DBPASSWORD}@cluster0.hkoyi.mongodb.net/${process.env.COLECTION}?retryWrites=true&w=majority&appName=Cluster0`)
-    .then(() => console.log('Connected!'));
+function dbconfig() {
+  mongoose
+    .connect(
+      `mongodb+srv://automallbdltd_db_user:jqkCqEy7MaaHemrC@cluster0.ol5pm8g.mongodb.net/?appName=Cluster0`,
+    )
+    .then(() => console.log("Connected!"));
 }
 
-module.exports = dbconfig
+module.exports = dbconfig;

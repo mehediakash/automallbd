@@ -20,8 +20,10 @@ const ItemCard = ({ item }) => {
         <h1 className="font-titleFont font-semibold">{item.name}</h1>
       </div>
       <div className="col-span-5 md:col-span-3 flex items-center justify-between py-4 md:py-0 px-4 md:px-0 gap-6 md:gap-0">
-        <div className="flex w-1/3 items-center text-lg font-semibold">
-          {item.size}
+        <div className="flex flex-col w-1/3 justify-center text-sm font-semibold">
+          {item.size && <span>Size: {item.size}</span>}
+          {item.color && <span>Color: {item.color}</span>}
+          {!item.size && !item.color && <span>-</span>}
         </div>
         <div className="flex w-1/3 items-center text-lg font-semibold">
           {item.price} ৳

@@ -4,7 +4,7 @@ import { AppstoreOutlined, BarsOutlined } from "@ant-design/icons";
 import ProductCard from "../Components/ProductCard";
 import { RiListSettingsLine } from "react-icons/ri";
 import axios from "../Components/Axios";
-import ServerLink from "../Components/Serverlink";
+import ServerLink, { getImageUrl } from "../Components/Serverlink";
 
 const ShopPage = () => {
   const [view, setView] = useState("grid"); // Grid or list view
@@ -18,7 +18,6 @@ const ShopPage = () => {
   const [selectedCategories, setSelectedCategories] = useState([]); // Selected categories
   const [currentPage, setCurrentPage] = useState(1); // Pagination
   const [totalProducts, setTotalProducts] = useState(0);
-
 
   const pageSize = 12; // Products per page
 
@@ -79,14 +78,14 @@ const ShopPage = () => {
     // Filter by selected brands
     if (selectedBrands?.length > 0) {
       filtered = filtered?.filter((product) =>
-        selectedBrands?.includes(product?.brand?._id)
+        selectedBrands?.includes(product?.brand?._id),
       );
     }
 
     // Filter by selected categories
     if (selectedCategories.length > 0) {
       filtered = filtered.filter((product) =>
-        selectedCategories.includes(product.category?._id)
+        selectedCategories.includes(product.category?._id),
       );
     }
 
@@ -228,7 +227,7 @@ const ShopPage = () => {
                   key={product._id}
                   title={product.title}
                   description={product.description}
-                  img={`${ServerLink}${product.photo[0]}`}
+                  img={getImageUrl(product.photo?.[0])}
                   price={product.price}
                 />
               ))}

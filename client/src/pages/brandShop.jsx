@@ -4,24 +4,24 @@ import axios from "../Components/Axios";
 import { Pagination, Dropdown, Menu } from "antd";
 import { AppstoreOutlined, BarsOutlined } from "@ant-design/icons";
 import ProductCard from "../Components/ProductCard";
-import ServerLink from "../Components/Serverlink";
+import ServerLink, { getImageUrl } from "../Components/Serverlink";
 
 const BrandShop = () => {
   const { id } = useParams(); // Get brand ID from route
   const [brand, setBrand] = useState(null);
-  const [color, setColor] = useState("#091017")
+  const [color, setColor] = useState("#091017");
   const [view, setView] = useState("grid"); // State to toggle between grid and list view
   const [sortOption, setSortOption] = useState("default"); // State for sorting
   const [isLoading, setIsLoading] = useState(true); // Loading state
-console.log(color)
+  console.log(color);
   // Fetch brand data
   useEffect(() => {
     const fetchBrandData = async () => {
       try {
         const response = await axios.get(`/brand/getby/${id}`);
         setBrand(response.data.brand);
-        set
-        console.log(response.data.brand)
+        set;
+        console.log(response.data.brand);
       } catch (error) {
         console.error("Error fetching brand data:", error);
       } finally {
@@ -56,8 +56,6 @@ console.log(color)
       <div className="container mx-auto py-8 px-4 flex mt-20 flex-col md:flex-row relative">
         <div className="w-full md:p-4 p-0">
           <div className="flex justify-between items-center mb-6">
-           
-
             <Dropdown overlay={sortMenu}>
               <button className="px-4 py-2 text-black bg-gray-200 rounded-md">
                 Sort by: {sortOption} ▼
@@ -90,13 +88,11 @@ console.log(color)
             }
           >
             {brand.product.map((product) => (
-              
               <ProductCard
                 key={product._id}
                 title={product.title}
                 discription={product.description}
-                img={`${ServerLink}${product.photo[0].replace("\\", "/")}`}
-               
+                img={getImageUrl(product.photo?.[0])}
                 price={product.price}
                 id={product._id}
               />
@@ -104,7 +100,11 @@ console.log(color)
           </div>
 
           <div className="mt-8">
-            <Pagination defaultCurrent={1} total={brand.product.length} pageSize={12} />
+            <Pagination
+              defaultCurrent={1}
+              total={brand.product.length}
+              pageSize={12}
+            />
           </div>
         </div>
       </div>

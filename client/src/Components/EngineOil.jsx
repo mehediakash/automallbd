@@ -1,69 +1,58 @@
 import React, { useEffect, useState } from "react";
 import axios from "./Axios";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules"; // Import from modules
-import ServerLink from "./Serverlink";
-import "swiper/swiper-bundle.css";
+import { getImageUrl } from "./Serverlink";
 import EnginOilCard from "./EnginOilCard";
 
 const EngineOil = () => {
   const [brands, setBrands] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Fetch brands from API
   useEffect(() => {
     const fetchBrands = async () => {
       try {
         const response = await axios.get("/brand/all");
-        setBrands(response.data.brands);
+        setBrands(response.data.brands || []);
       } catch (error) {
         console.error("Error fetching brands:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchBrands();
   }, []);
 
-  return (
-    <div className="bg-root py-20">
-      <div className="container relative mx-auto flex flex-wrap justify-start border border-[rgba(225,225,225,0.25)] pt-10 px-10 rounded-lg">
-        <div className="absolute top-[-5%] left-[50%] translate-x-[-50%] bg-root py-3 px-5">
-          <h2 className="text-white text-2xl">Our Brand</h2>
-        </div>
+  if (!loading && brands.length === 0) {
+    return null;
+  }
 
-        {/* Swiper Slider */}
-        <Swiper
-          spaceBetween={30}
-          slidesPerView={2} // Default for mobile
-          breakpoints={{
-            // Responsive breakpoints
-            640: {
-              slidesPerView: 2, // Mobile view
-            },
-            768: {
-              slidesPerView: 4, // Tablets
-            },
-            1024: {
-              slidesPerView: 4, // Larger screens
-            },
-          }}
-          navigation={false}
-          pagination={{ clickable: true }}
-          modules={[Navigation, Pagination]}
-          className="mySwiper relative pb-10 md:pb-20"
-        >
-          {brands.map((brand) => (
-            <SwiperSlide key={brand._id} className="flex flex-col gap-y-5">
+  return (
+    <section className="bg-root py-8 sm:py-12 md:py-16">
+      <div className="container mx-auto px-3.5 sm:px-6 lg:px-8">
+        <div className="relative border border-[rgba(225,225,225,0.2)] rounded-xl sm:rounded-2xl pt-7 pb-6 px-3 sm:pt-9 sm:pb-8 sm:px-6 md:pt-12 md:pb-10 md:px-8">
+          {/* Centered Section Header Badge */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-root px-4 sm:px-6 py-0.5 sm:py-1 whitespace-nowrap z-10">
+            <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold tracking-wide">
+              Our Brand
+            </h2>
+          </div>
+
+          {/* Responsive Brand Grid */}
+          <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+            {brands.map((brand) => (
               <EnginOilCard
-              link={`/brandshop/${brand._id}`}
+                key={brand._id}
+                link={`/brandshop/${brand._id}`}
                 discription={brand.description || "No description available"}
                 title={brand.title}
-                img={`${ServerLink}${brand.photo.replace("\\", "/")}`}
+                img={getImageUrl(brand.photo)}
               />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

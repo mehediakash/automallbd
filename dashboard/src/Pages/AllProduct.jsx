@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import JoditEditor from "jodit-react";
 import axios from "../Components/Axios"; // Adjust the path as per your folder structure
-import ServerLink from "../Components/ServerLink";
+import ServerLink, { getImageUrl } from "../Components/ServerLink";
 
 const AllProduct = () => {
   const [sizes, setSizes] = useState([]);
@@ -22,7 +22,6 @@ const AllProduct = () => {
   const [colorInputValue, setColorInputValue] = useState("");
   const colorInputRef = useRef(null);
 
-
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,7 +32,7 @@ const AllProduct = () => {
   const joditConfig = {
     readonly: false, // allows editing
     toolbarSticky: true,
-    height:"400px",
+    height: "400px",
     uploader: {
       insertImageAsBase64URI: true, // allows image uploads as base64
     },
@@ -183,7 +182,7 @@ const AllProduct = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       message.success("Product updated successfully");
@@ -230,7 +229,7 @@ const AllProduct = () => {
           {photos.map((photo, index) => (
             <img
               key={index}
-              src={`${ServerLink}${photo}`}
+              src={getImageUrl(photo)}
               alt="Product"
               className="w-16 h-16 object-cover mr-2"
             />
@@ -311,15 +310,13 @@ const AllProduct = () => {
           </Form.Item> */}
 
           <Form.Item label="Details" name="details" required>
-          <JoditEditor
-            ref={editor}
-            value={content}
-            config={joditConfig}
-            onBlur={(newContent) => setContent(newContent)} // Updates content on blur
-          />
-        </Form.Item>
-
-
+            <JoditEditor
+              ref={editor}
+              value={content}
+              config={joditConfig}
+              onBlur={(newContent) => setContent(newContent)} // Updates content on blur
+            />
+          </Form.Item>
 
           <div className="flex gap-x-2">
             {/* Size Tags with Input */}
@@ -390,7 +387,7 @@ const AllProduct = () => {
               {editingProduct?.photo?.map((photo, index) => (
                 <div key={index} className="relative">
                   <img
-                    src={`${ServerLink}${photo}`}
+                    src={getImageUrl(photo)}
                     alt="Product"
                     className="w-16 h-16 object-cover"
                   />

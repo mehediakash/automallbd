@@ -1,60 +1,100 @@
 import React, { forwardRef } from "react";
 
-const Invoice = forwardRef(({ billingInfo, products, subtotal, taxRate, total, invoiceNumber ,shippingMethod }, ref) => {
-  console.log(billingInfo)
+const Invoice = forwardRef(
+  (
+    {
+      billingInfo,
+      products,
+      subtotal,
+      taxRate,
+      total,
+      invoiceNumber,
+      shippingMethod,
+      shippingCharge,
+    },
+    ref,
+  ) => {
+    const formattedShipping =
+      shippingCharge !== undefined
+        ? `${Number(shippingCharge).toFixed(2)} ৳`
+        : shippingMethod === "Inside Dhaka"
+          ? "70.00 ৳"
+          : shippingMethod === "Outside Dhaka"
+            ? "130.00 ৳"
+            : "0.00 ৳";
 
-  return (
-    <div ref={ref} className="p-8 bg-white max-w-2xl mx-auto">
-      {/* Invoice Header */}
-      <h1 className="text-2xl font-bold mb-4">Invoice #{invoiceNumber}</h1>
+    return (
+      <div ref={ref} className="p-8 bg-white max-w-2xl mx-auto">
+        {/* Invoice Header */}
+        <h1 className="text-2xl font-bold mb-4">Invoice #{invoiceNumber}</h1>
 
+        {/* Billing Information */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-1">Billing Information</h2>
+          <p className="text-gray-800 font-medium">{billingInfo?.name}</p>
+          {billingInfo?.district && (
+            <p className="text-gray-700">
+              <span className="font-semibold">District:</span>{" "}
+              {billingInfo.district}
+            </p>
+          )}
+          <p className="text-gray-700">{billingInfo?.streetAddress}</p>
+          <p className="text-gray-600">Email: {billingInfo?.email}</p>
+          {billingInfo?.phoneNumber && (
+            <p className="text-gray-600">Phone: {billingInfo.phoneNumber}</p>
+          )}
+        </div>
 
-      {/* Billing Information */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold">Billing Information</h2>
-        <p>{billingInfo?.name}</p>
-        <p>{billingInfo?.streetAddress}</p>
-        <p>Email: {billingInfo?.email}</p>
-      </div>
-
-      {/* Product Details */}
-      <table className="min-w-full bg-white border">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border-b">Product</th>
-            <th className="py-2 px-4 border-b">size</th>
-            <th className="py-2 px-4 border-b">Quantity</th>
-            <th className="py-2 px-4 border-b">Price</th>
-            <th className="py-2 px-4 border-b">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product, index) => (
-            <tr key={index}>
-              <td className="py-2 px-4 border-b">{product.name}</td>
-              <td className="py-2 px-4 border-b">{product.size}</td>
-              <td className="py-2 px-4 border-b">{product.quantity}</td>
-              <td className="py-2 px-4 border-b">{product.price?.toFixed(2)} ৳</td>
-              <td className="py-2 px-4 border-b">{(product.price * product.quantity)?.toFixed(2)} ৳</td>
+        {/* Product Details */}
+        <table className="min-w-full bg-white border">
+          <thead>
+            <tr>
+              <th className="py-2 px-4 border-b text-left">Product</th>
+              <th className="py-2 px-4 border-b text-center">Size</th>
+              <th className="py-2 px-4 border-b text-center">Quantity</th>
+              <th className="py-2 px-4 border-b text-right">Price</th>
+              <th className="py-2 px-4 border-b text-right">Total</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {products?.map((product, index) => (
+              <tr key={index}>
+                <td className="py-2 px-4 border-b">{product.name}</td>
+                <td className="py-2 px-4 border-b text-center">
+                  {product.size || "N/A"}
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  {product.quantity}
+                </td>
+                <td className="py-2 px-4 border-b text-right">
+                  {Number(product.price || 0).toFixed(2)} ৳
+                </td>
+                <td className="py-2 px-4 border-b text-right">
+                  {(Number(product.price || 0) * product.quantity).toFixed(2)} ৳
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-      {/* Summary */}
-      <div className="mt-6 text-right">
-        <p className="font-semibold">Shiping Charge:  {shippingMethod === "standard"
-                    ? "60.00 ৳"
-                    : "150.00 ৳"} </p>
-        <p className="font-bold text-lg">Total: {total.toFixed(2)} ৳</p>
-      </div>
+        {/* Summary */}
+        <div className="mt-6 text-right space-y-1">
+          <p className="font-medium text-gray-700">
+            Shipping Charge ({shippingMethod || "Standard"}):{" "}
+            {formattedShipping}
+          </p>
+          <p className="font-bold text-lg text-gray-900">
+            Total: {total !== undefined ? Number(total).toFixed(2) : "0.00"} ৳
+          </p>
+        </div>
 
-      {/* Footer */}
-      <div className="mt-8 text-center">
-        <p className="text-gray-500">Thank you for your purchase!</p>
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-gray-500">Thank you for your purchase!</p>
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 export default Invoice;

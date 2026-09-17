@@ -11,7 +11,10 @@ export const orebiSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const item = state.products.find(
-        (item) => item._id === action.payload._id
+        (item) =>
+          item._id === action.payload._id &&
+          (item.size || null) === (action.payload.size || null) &&
+          (item.color || null) === (action.payload.color || null),
       );
       if (item) {
         item.quantity += action.payload.quantity;
@@ -21,7 +24,7 @@ export const orebiSlice = createSlice({
     },
     increaseQuantity: (state, action) => {
       const item = state.products.find(
-        (item) => item._id === action.payload._id
+        (item) => item._id === action.payload._id,
       );
       if (item) {
         item.quantity++;
@@ -29,7 +32,7 @@ export const orebiSlice = createSlice({
     },
     drecreaseQuantity: (state, action) => {
       const item = state.products.find(
-        (item) => item._id === action.payload._id
+        (item) => item._id === action.payload._id,
       );
       if (item.quantity === 1) {
         item.quantity = 1;
@@ -39,7 +42,7 @@ export const orebiSlice = createSlice({
     },
     deleteItem: (state, action) => {
       state.products = state.products.filter(
-        (item) => item._id !== action.payload
+        (item) => item._id !== action.payload,
       );
     },
     resetCart: (state) => {

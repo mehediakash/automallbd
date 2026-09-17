@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Upload,
-  Table,
-  Modal,
-  message,
-} from "antd";
+import { Button, Form, Input, Upload, Table, Modal, message } from "antd";
 import {
   UploadOutlined,
   EditOutlined,
@@ -15,8 +7,7 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import axios from "../Components/Axios";
-import ServerLink from "../Components/ServerLink";
-
+import ServerLink, { getImageUrl } from "../Components/ServerLink";
 
 const AddBrand = () => {
   const [form] = Form.useForm();
@@ -46,8 +37,6 @@ const AddBrand = () => {
     setIsModalVisible(true);
   };
 
-
-
   const openEditModal = (brand) => {
     setEditingBrand(brand);
     setIsEditMode(true);
@@ -55,36 +44,39 @@ const AddBrand = () => {
       title: brand.title,
       color: brand.color,
     });
-  
+
     // If the brand has a photo, set it as well in the form
     if (brand.photo) {
       form.setFieldsValue({
-        photo: [{ url: `${ServerLink}${brand.photo}` }],
+        photo: [{ url: getImageUrl(brand.photo) }],
       });
     }
-  
+
     setIsModalVisible(true);
   };
-  
 
   const handleFormSubmit = async (values) => {
     const formData = new FormData();
     formData.append("title", values.title);
     formData.append("color", values.color);
-  
+
     // If a new photo is selected, add it to the FormData
     if (values.photo && values.photo[0]) {
       formData.append("photo", values.photo[0].originFileObj);
     }
-  
+
     setLoading(true);
-  
+
     try {
       // If it's an edit, update the existing brand
       if (isEditMode && editingBrand) {
-        const response = await axios.put(`/brand/edit/${editingBrand._id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const response = await axios.put(
+          `/brand/edit/${editingBrand._id}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        );
         message.success("Brand updated successfully!");
       } else {
         // Otherwise, add a new brand
@@ -93,19 +85,18 @@ const AddBrand = () => {
         });
         message.success("Brand added successfully!");
       }
-  
-      fetchBrands();  // Reload brands
-      setIsModalVisible(false);  // Close the modal
-      form.resetFields();  // Reset the form
+
+      fetchBrands(); // Reload brands
+      setIsModalVisible(false); // Close the modal
+      form.resetFields(); // Reset the form
     } catch (error) {
-      message.error(isEditMode ? "Failed to update brand." : "Failed to add brand.");
+      message.error(
+        isEditMode ? "Failed to update brand." : "Failed to add brand.",
+      );
     } finally {
       setLoading(false);
     }
   };
-  
-  
-  
 
   const handleDeleteBrand = async (id) => {
     try {
@@ -124,7 +115,7 @@ const AddBrand = () => {
       key: "photo",
       render: (photo) => (
         <img
-          src={`${ServerLink}${photo}`}
+          src={getImageUrl(photo)}
           alt="Brand"
           style={{ width: 60, height: 60 }}
         />
@@ -182,14 +173,18 @@ const AddBrand = () => {
           <Form.Item
             name="title"
             label="Brand Title"
-            rules={[{ required: true, message: "Please enter the brand title" }]}
+            rules={[
+              { required: true, message: "Please enter the brand title" },
+            ]}
           >
             <Input placeholder="Enter brand title" />
           </Form.Item>
           <Form.Item
             name="color"
             label="Color Code"
-            rules={[{ required: true, message: "Please enter the brand color code" }]}
+            rules={[
+              { required: true, message: "Please enter the brand color code" },
+            ]}
           >
             <Input placeholder="Enter color code" />
           </Form.Item>

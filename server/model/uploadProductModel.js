@@ -36,6 +36,11 @@ const uploadProduct = new Schema({
       type: String,
     },
   ],
+  photoPublicIds: [
+    {
+      type: String,
+    },
+  ],
   category: {
     type: Schema.Types.ObjectId,
     ref: "Category",
