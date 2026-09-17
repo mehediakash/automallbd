@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import BradCumbs from "../components/BradCumbs";
-
+import BradCumbs from "../Components/BradCumbs";
 
 const ShippingRates = () => {
   useEffect(() => {

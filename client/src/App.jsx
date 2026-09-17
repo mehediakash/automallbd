@@ -17,7 +17,7 @@ import CategoryShop from "./pages/categoryshop";
 import SubCategoryShop from "./pages/subCategoryShop";
 import About from "./pages/about";
 import Contact from "./pages/contact";
-import ShippingRates from "./pages/ShippingRates";
+import ShippingRates from "./pages/shippingRates";
 import RefundsAndReplacements from "./pages/RefundsAndReplacements";
 import TermsCondition from "./pages/termsCondition";
 import Ourteam from "./pages/ourteam";
@@ -25,18 +25,16 @@ import Ourteam from "./pages/ourteam";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
-   
       <Route index element={<Home />} />
-      <Route path="shop" element={<ShopPage />} > 
-          <Route path="brand" element={<Productpage />} />
-
+      <Route path="shop" element={<ShopPage />}>
+        <Route path="brand" element={<Productpage />} />
       </Route>
       <Route path="product/:id" element={<Productpage />} />
       <Route path="cart" element={<CartPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/orderSucces" element={<OrderSuccessPage />} />
       <Route path="/brandshop/:id" element={<BrandShop />} />
-      <Route path="/category/:id" element={< CategoryShop/>} />
+      <Route path="/category/:id" element={<CategoryShop />} />
       <Route path="/subCategory/:id" element={<SubCategoryShop />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
@@ -44,8 +42,8 @@ const router = createBrowserRouter(
       <Route path="/refund-replace" element={<RefundsAndReplacements />} />
       <Route path="/terms-condition" element={<TermsCondition />} />
       <Route path="/ourteam" element={<Ourteam />} />
-    </Route>
-  )
+    </Route>,
+  ),
 );
 
 export default function App() {

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import BradCumbs from "../components/BradCumbs";
-
+import BradCumbs from "../Components/BradCumbs";
 
 const TermsCondition = () => {
   useEffect(() => {
@@ -130,8 +129,11 @@ const TermsCondition = () => {
             <p className="mb-4">
               If you have any questions or concerns about these Terms &
               Conditions, please contact us at{" "}
-              <a href="mailto:Automallbangladesh@gmail.com" className="text-blue-500">
-              Automallbangladesh@gmail.com
+              <a
+                href="mailto:Automallbangladesh@gmail.com"
+                className="text-blue-500"
+              >
+                Automallbangladesh@gmail.com
               </a>
               . We are here to help and ensure you have a great experience with
               Automall .

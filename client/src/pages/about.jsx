@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import AboutBanners from "../components/AboutBanner";
-import AboutInfos from "../components/AboutInfo";
+import AboutBanners from "../Components/AboutBanner";
+import AboutInfos from "../Components/AboutInfo";
 
 const About = () => {
   useEffect(() => {
